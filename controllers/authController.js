@@ -21,7 +21,7 @@ const setTokenCookie = (res, token) => {
 // Register User
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -38,6 +38,7 @@ const register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            role,
         });
 
         // Generate and set token
@@ -47,7 +48,9 @@ const register = async (req, res) => {
         res.status(201).json({
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt
         });
 
     } catch (error) {
@@ -86,7 +89,9 @@ const login = async (req, res) => {
         res.json({
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt
         });
     } catch (error) {
         res.status(400).json({ message: error.message });
