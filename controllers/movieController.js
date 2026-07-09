@@ -118,9 +118,43 @@ const updateMovie = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Delete movie
+ * @route   DELETE /api/movies/:id
+ * @access  Admin
+ */
+const deleteMovie = async (req, res) => {
+  try {
+    // get the movie id from the URL
+    const { id } = req.params;
+
+    // check if the movie exists in the database
+    const movie = await Movie.findById(id);
+
+    if (!movie) {
+      return res.status(404).json({
+        message: "Movie not found",
+      });
+    }
+
+    // delete the movie from the database
+    await movie.deleteOne();
+
+    res.status(200).json({
+      message: "Movie deleted successfully",
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getMovies,
   getMovieById,
   createMovie,
   updateMovie,
+  deleteMovie,
 };
