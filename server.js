@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const movieRoutes = require("./routes/movieRoutes");
 const PORT = process.env.PORT || 3002;
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/movies", movieRoutes);
 
 app.listen(PORT, () => {
   console.log("Port is running on ", PORT);
