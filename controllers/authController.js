@@ -21,7 +21,7 @@ const setTokenCookie = (res, token) => {
 // Register User
 const register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password } = req.body;
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -38,7 +38,6 @@ const register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            role,
         });
 
         // Generate and set token
