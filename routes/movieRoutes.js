@@ -5,14 +5,22 @@ const router = express.Router();
 const {
   getMovies,
   getMovieById,
+  createMovie,
+  updateMovie,
 } = require("../controllers/movieController");
 
-// ~~~ Movie Routes ~~~
-// GET /api/movies  (retrieve all movies)
-router.get("/", getMovies);
+// GET all movies
+// POST new movie
+router
+  .route("/")
+  .get(getMovies)
+  .post(createMovie);
 
-// ~~~ Movie Detail Route ~~~
-// GET /api/movies/:id  (retrieve movie by ID)
-router.get("/:id", getMovieById);
+// GET movie by ID
+// UPDATE movie by ID
+router
+  .route("/:id")
+  .get(getMovieById)
+  .put(updateMovie);
 
 module.exports = router;
