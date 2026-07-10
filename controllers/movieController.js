@@ -7,9 +7,54 @@ const Movie = require("../models/Movies");
  */
 const getMovies = async (req, res) => {
   try {
-    const movies = await Movie.find();
 
-    res.status(200).json(movies);
+    // query parameters
+    const {
+      search,
+      genre,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    // filter object
+    const filter = {};
+
+    // search based on title (case-insensitive)
+    if (search) {
+      filter.title = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    // filter based on genre (case-insensitive)
+    if (genre) {
+      filter.genre = {
+        $regex: `^${genre}$`,
+        $options: "i",
+      };
+    }
+
+    // calculate pagination values
+    const currentPage = Number(page);
+    const perPage = Number(limit);
+    const skip = (currentPage - 1) * perPage;
+
+    // query database
+    const movies = await Movie.find(filter)
+      .skip(skip)
+      .limit(perPage);
+
+    // total data
+    const totalMovies = await Movie.countDocuments(filter);
+
+    res.status(200).json({
+      totalMovies,
+      currentPage,
+      totalPages: Math.ceil(totalMovies / perPage),
+      movies,
+    });
+
   } catch (error) {
     res.status(500).json({
       message: error.message,
