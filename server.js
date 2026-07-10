@@ -4,11 +4,15 @@ const app = express();
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
+
+// routes
 const authRoutes = require("./routes/authRoutes");
 const showtimeRoutes = require("./routes/showtimeRoutes");
 const movieShowtimeRoutes = require("./routes/movieShowtimeRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const movieRoutes = require("./routes/movieRoutes");
+
 const PORT = process.env.PORT || 3002;
 
 dotenv.config();
@@ -32,6 +36,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
+<<<<<<< HEAD
 app.use("/api/showtimes", showtimeRoutes);
 app.use("/api/movies", movieShowtimeRoutes);
 
@@ -43,6 +48,9 @@ app.use((err, req, res, next) => {
     message: statusCode === 500 ? "Internal server error" : err.message,
   });
 });
+=======
+app.use("/api/movies", movieRoutes);
+>>>>>>> 6979ad0c94f4cc021efd1a487d552de8fc06873a
 
 app.listen(PORT, () => {
   console.log("Port is running on ", PORT);
