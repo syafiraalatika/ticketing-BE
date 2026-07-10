@@ -24,6 +24,10 @@ const movieSchema = new mongoose.Schema({
     description: {
         type: String,
         required: [true, "Please insert movie description"],
+    },
+    releaseDate: {
+        type: Date,
+        required: [true, "Please insert movie release date"],
     }
 }, {timestamps: true} );
 
