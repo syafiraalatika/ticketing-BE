@@ -5,6 +5,7 @@ const User = require("../models/Users");
 const protect = async (req, res, next) => {
     let token;
 
+    // Check if the token is present in the cookies
     if (req.cookies && req.cookies.token) {
         token = req.cookies.token;
     }
@@ -14,8 +15,10 @@ const protect = async (req, res, next) => {
     }
 
     try {
+        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+        // Attach the user to the request object, excluding the password
         req.user = await User.findById(decoded.id).select("-password");
         
         if (!req.user) {
