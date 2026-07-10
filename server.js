@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const showtimeRoutes = require("./routes/showtimeRoutes");
+const movieShowtimeRoutes = require("./routes/movieShowtimeRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const PORT = process.env.PORT || 3002;
@@ -30,6 +32,17 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/showtimes", showtimeRoutes);
+app.use("/api/movies", movieShowtimeRoutes);
+
+// Centralized error handler
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    message: statusCode === 500 ? "Internal server error" : err.message,
+  });
+});
 
 app.listen(PORT, () => {
   console.log("Port is running on ", PORT);
