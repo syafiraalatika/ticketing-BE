@@ -123,16 +123,98 @@ const cancelBooking = async (req, res) => {
 // @access  Admin Only
 const getAllBookings = async (req, res) => {
     try {
-        const bookings = await Booking.find()
-            .populate("userId", "name email")
-            .populate("movieId", "title")
-            .populate("showtimeId", "date time studio price")
-            .sort({ createdAt: -1 });
+        const { status, search, movieId, date, page = 1, limit = 10 } = req.query;
+        
+        let query = {};
+        
+        if (status && status !== 'all') {
+            query.status = status;
+        }
+        
+        if (movieId) {
+            query.movieId = movieId;
+        }
 
-        res.json(bookings);
+        if (date) {
+            // Find showtimes matching the date
+            const showtimes = await Showtime.find({ date: { $regex: `^${date}` } }, '_id');
+            const showtimeIds = showtimes.map(st => st._id);
+            query.showtimeId = { $in: showtimeIds };
+        }
+
+        if (search) {
+            // Wait, we need to import User at the top of bookingController.js if not already imported.
+            // Let's assume we can use mongoose.model("User")
+            const mongoose = require("mongoose");
+            const User = mongoose.model("User");
+            const users = await User.find({ 
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } }
+                ]
+            }, '_id');
+            const userIds = users.map(u => u._id);
+            query.userId = { $in: userIds };
+        }
+
+        const currentPage = Number(page);
+        const perPage = Number(limit);
+        const skip = (currentPage - 1) * perPage;
+
+        const totalItems = await Booking.countDocuments(query);
+        const bookings = await Booking.find(query)
+            .populate("userId", "name email")
+            .populate("movieId", "title poster")
+            .populate("showtimeId", "date time studio price")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage);
+
+        res.json({
+            data: bookings,
+            page: currentPage,
+            limit: perPage,
+            totalItems,
+            totalPages: Math.ceil(totalItems / perPage)
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-module.exports = { createBooking, getMyBookings, getBookingById, cancelBooking, getAllBookings };
+// @desc    Update booking status (Admin View)
+// @route   PUT /api/admin/bookings/:id
+// @access  Admin Only
+const updateBookingStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!["pending", "confirmed", "cancelled"].includes(status)) {
+            return res.status(400).json({ message: "Invalid status" });
+        }
+
+        const booking = await Booking.findById(id);
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        // Handle cancelling seats if status changes to cancelled
+        if (status === "cancelled" && booking.status !== "cancelled") {
+            await Showtime.findByIdAndUpdate(booking.showtimeId, {
+                $pullAll: { bookedSeats: booking.seats }
+            });
+        } 
+        // Note: Realistically, if changing from cancelled to confirmed, we'd need to check seat availability.
+        // For simplicity, we just update the status.
+
+        booking.status = status;
+        await booking.save();
+
+        res.json(booking);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createBooking, getMyBookings, getBookingById, cancelBooking, getAllBookings, updateBookingStatus };

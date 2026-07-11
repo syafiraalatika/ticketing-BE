@@ -10,6 +10,9 @@ const {
   deleteMovie
 } = require("../controllers/movieController");
 
+// import controller Showtime
+const { getShowtimesForMovie } = require("../controllers/showtimeController");
+
 // import middleware
 const { protect } = require("../middleware/auth");
 const { requireAdmin } = require("../middleware/requireAdmin");
@@ -29,5 +32,8 @@ router
   .get(getMovieById)
   .put(protect, requireAdmin, updateMovie)
   .delete(protect, requireAdmin, deleteMovie);
+
+// GET all showtimes for a movie
+router.get("/:movieId/showtimes", getShowtimesForMovie);
 
 module.exports = router;

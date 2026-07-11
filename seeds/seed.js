@@ -54,6 +54,7 @@ const importData = async () => {
         genre: 'Action',
         duration: 128,
         rating: '13+',
+        releaseDate: "2026-07-10",
         poster: 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A Jakarta courier uncovers a city-wide conspiracy hidden inside a network of midnight cinema reels.'
       },
@@ -62,6 +63,7 @@ const importData = async () => {
         genre: 'Drama',
         duration: 116,
         rating: 'SU',
+        releaseDate: "2026-08-10",
         poster: 'https://images.pexels.com/photos/7991161/pexels-photo-7991161.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'An aging projectionist races to save a historic cinema as a storm traps one final audience inside.'
       },
@@ -70,6 +72,7 @@ const importData = async () => {
         genre: 'Sci-Fi',
         duration: 142,
         rating: '13+',
+        releaseDate: "2026-07-07",
         poster: 'https://images.pexels.com/photos/2873486/pexels-photo-2873486.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A rescue crew discovers that a silent space station is still broadcasting memories from its missing crew.'
       },
@@ -78,6 +81,7 @@ const importData = async () => {
         genre: 'Romance',
         duration: 104,
         rating: '13+',
+        releaseDate: "2026-07-08",
         poster: 'https://images.pexels.com/photos/274937/pexels-photo-274937.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'Two rival musicians write one song together over seven rainy nights in Bandung.'
       },
@@ -86,6 +90,7 @@ const importData = async () => {
         genre: 'Comedy',
         duration: 98,
         rating: '13+',
+        releaseDate: "2026-08-01",
         poster: 'https://images.pexels.com/photos/7991490/pexels-photo-7991490.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A group of failed comedians accidentally become neighborhood vigilantes.'
       },
@@ -94,6 +99,7 @@ const importData = async () => {
         genre: 'Adventure',
         duration: 121,
         rating: 'SU',
+        releaseDate: "2026-08-17",
         poster: 'https://images.pexels.com/photos/1117132/pexels-photo-1117132.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A coastal village discovers an ancient promise beneath the waves.'
       },
@@ -102,6 +108,7 @@ const importData = async () => {
         genre: 'Thriller',
         duration: 133,
         rating: '17+',
+        releaseDate: "2026-07-11",
         poster: 'https://images.pexels.com/photos/5662857/pexels-photo-5662857.png?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A legal thriller where every witness remembers a different version of the same night.'
       },
@@ -110,6 +117,7 @@ const importData = async () => {
         genre: 'Family',
         duration: 110,
         rating: 'SU',
+        releaseDate: "2026-07-24",
         poster: 'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=500&h=750&fit=crop',
         description: 'A retro game designer rebuilds her childhood arcade and finds a message hidden in the final level.'
       }
@@ -124,7 +132,7 @@ const importData = async () => {
         time: '13:00',
         studio: 'Studio 1',
         price: 55000,
-        bookedSeats: ['A1', 'A2', 'B1'] 
+        bookedSeats: ['A1', 'A2', 'B1']
       },
       {
         movieId: movies[0]._id, // Neon Archipelago

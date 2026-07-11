@@ -12,6 +12,8 @@ const getMovies = async (req, res) => {
     const {
       search,
       genre,
+      status,
+      sort,
       page = 1,
       limit = 10,
     } = req.query;
@@ -35,6 +37,24 @@ const getMovies = async (req, res) => {
       };
     }
 
+    // filter based on status
+    if (status) {
+      const now = new Date();
+      if (status === 'now_showing') {
+        filter.releaseDate = { $lte: now };
+      } else if (status === 'coming_soon') {
+        filter.releaseDate = { $gt: now };
+      }
+    }
+
+    // determine sorting
+    let sortObj = { createdAt: -1 };
+    if (sort) {
+      if (sort === 'title') sortObj = { title: 1 };
+      else if (sort === 'releaseDate') sortObj = { releaseDate: -1 };
+      else if (sort === 'rating') sortObj = { rating: -1 };
+    }
+
     // calculate pagination values
     const currentPage = Number(page);
     const perPage = Number(limit);
@@ -42,6 +62,7 @@ const getMovies = async (req, res) => {
 
     // query database
     const movies = await Movie.find(filter)
+      .sort(sortObj)
       .skip(skip)
       .limit(perPage);
 
@@ -49,10 +70,11 @@ const getMovies = async (req, res) => {
     const totalMovies = await Movie.countDocuments(filter);
 
     res.status(200).json({
-      totalMovies,
-      currentPage,
+      totalItems: totalMovies,
+      page: currentPage,
+      limit: perPage,
       totalPages: Math.ceil(totalMovies / perPage),
-      movies,
+      data: movies,
     });
 
   } catch (error) {
@@ -102,6 +124,7 @@ const createMovie = async (req, res) => {
       rating,
       poster,
       description,
+      releaseDate,
     } = req.body;
 
     // create new movie document in MongoDB
@@ -112,6 +135,7 @@ const createMovie = async (req, res) => {
       rating,
       poster,
       description,
+      releaseDate,
     });
 
     // send response with the new created movie

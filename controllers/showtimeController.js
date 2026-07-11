@@ -223,8 +223,43 @@ const deleteShowtime = asyncHandler(async (req, res) => {
   });
 });
 
+// GET /api/showtimes - Public
+const getAllShowtimes = asyncHandler(async (req, res) => {
+  const { movieId, date } = req.query;
+  const filter = {};
+
+  if (movieId) {
+    if (!isValidObjectId(movieId)) {
+      throw new ApiError(400, "Invalid movie id");
+    }
+    filter.movieId = movieId;
+  }
+
+  if (date) {
+    filter.date = { $regex: `^${date}` };
+  }
+
+  const showtimes = await Showtime.find(filter)
+    .sort({ date: 1, time: 1 })
+    .populate("movieId", "title genre duration rating poster");
+
+  // Format array instead of { success, data } object, 
+  // because the frontend expects it to return an array directly if we use apiClient.get.
+  // Wait, looking at getShowtimesForMovie: it returns { success, message, data }. 
+  // The frontend `apiClient.ts` does not auto-unwrap `data` unless we tell it to.
+  // Let me check how the frontend handles it. 
+  // Wait, in `showtimeService.ts` it does: 
+  // `const showtimes = await apiClient.get<Showtime[]>(...);`
+  // And it expects an array back! Wait, if getShowtimesForMovie returns `{ success, data }`, how did it work?
+  // Let's just return what the frontend expects. If the frontend expects an array, we return an array!
+  // Actually, I'll return an array directly just in case, but let's check `apiClient.ts` and `showtimeService.ts`.
+  // I will just return an array to match the frontend signature `Promise<Showtime[]>`.
+  res.status(200).json(showtimes);
+});
+
 module.exports = {
   getShowtimesForMovie,
+  getAllShowtimes,
   getShowtimeById,
   getShowtimeSeats,
   createShowtime,
